@@ -1,12 +1,12 @@
 // ignore_for_file: deprecated_member_use
 // ignore_for_file: prefer_const_literals_to_create_immutables
 // ignore_for_file: prefer_const_constructors
-import 'package:flutter/gestures.dart';
 
 import './widgets/new_transaction.dart';
 import "package:flutter/material.dart";
 import './widgets/transaction_list.dart';
 import './models/transaction.dart';
+import './widgets/chart.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,7 +17,34 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "Flutter App",
+      title: "Expanses App",
+
+      //Configuring the overall app theme
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+        accentColor: Colors.amber,
+        fontFamily: "Quicksand",
+
+        //Individual Text Themes
+        textTheme: TextTheme(
+          //theme for medium titles
+          titleMedium: TextStyle(
+            fontFamily: "Quicksand",
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        //Theme for appbar
+        appBarTheme: AppBarTheme(
+          titleTextStyle: TextStyle(
+            fontFamily: "Quicksand",
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ),
+
       home: MyHomePage(),
     );
   }
@@ -30,20 +57,26 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> transactions = [];
-  final List<Transaction> _userTransactions = [
-    Transaction(
-      id: "01",
-      title: "New shoes",
-      amount: 69.99,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: "02",
-      title: "New Computer",
-      amount: 203.60,
-      date: DateTime.now(),
-    ),
-  ];
+  final List<Transaction> _userTransactions = [];
+  //   Transaction(
+  //     id: "01",
+  //     title: "New shoes",
+  //     amount: 69.99,
+  //     date: DateTime.now(),
+  //   ),
+  //   Transaction(
+  //     id: "02",
+  //     title: "New Computer",
+  //     amount: 203.60,
+  //     date: DateTime.now(),
+  //   ),
+  // ];
+
+   get _recentTransactions {
+    return _userTransactions.where((transaction) {
+      return transaction.date.isAfter(DateTime.now().subtract(Duration(days: 7),),),
+    });
+  }
 
   void _addNewTransaction(String newTitle, double newAmount) {
     final newTransaction = Transaction(
@@ -75,7 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Expenses App"),
+          title: Text("Expenses App"),
           actions: <Widget>[
             IconButton(
               icon: Icon(
@@ -89,15 +122,8 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(
-                width: double.infinity,
-                child: const Card(
-                  color: Colors.blue,
-                  child: Text("CHART!"),
-                  elevation: 5,
-                ),
-              ),
-              TransactionList(_userTransactions)
+              Chart(_recentTransactions),
+              TransactionList(_userTransactions),
             ],
           ),
         ),
