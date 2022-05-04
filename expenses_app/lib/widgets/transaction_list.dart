@@ -9,53 +9,59 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      //Creates the following Card for each transaction in the transactions list
-      children: transactions.map((transaction) {
-        return Card(
-          child: Row(
-            children: [
-              Container(
-                margin:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.purple, width: 2)),
-                padding: const EdgeInsets.all(10),
-                child:
-                    //AMOUNT
-                    Text(
-                  "${transaction.amount} €",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.purple,
-                  ),
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  //TITLE
-                  Text(
-                    transaction.title,
+    return Container(
+      height: 300,
+      child: ListView.builder(
+        itemBuilder: (context, index) {
+          return Card(
+            child: Row(
+              children: [
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.purple, width: 2)),
+                  padding: const EdgeInsets.all(10),
+                  child:
+                      //AMOUNT
+                      Text(
+                    //Amount gets rounded to 2 decimal places
+                    "${transactions[index].amount.toStringAsFixed(2)} €",
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontSize: 20,
+                      color: Colors.purple,
                     ),
                   ),
-                  //DATE
-                  Text(
-                    DateFormat("EEEE, d MMMM y").format(transaction.date),
-                    style: const TextStyle(
-                      color: Colors.grey,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    //TITLE
+                    Text(
+                      transactions[index].title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
-                  )
-                ],
-              )
-            ],
-          ),
-        );
-      }).toList(),
+                    //DATE
+                    Text(
+                      DateFormat("EEEE, d MMMM y")
+                          .format(transactions[index].date),
+                      style: const TextStyle(
+                        color: Colors.grey,
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          );
+        },
+        itemCount: transactions.length,
+        //Creates the following Card for each transaction in the transactions list
+      ),
     );
   }
 }
