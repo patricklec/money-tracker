@@ -1,3 +1,4 @@
+import './bar_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -23,7 +24,17 @@ class Chart extends StatelessWidget {
         }
       }
 
-      return {"day": DateFormat.E(weekDay), "amount": totalSum};
+      return {
+        "day": DateFormat.E().format(weekDay).substring(
+            0, 2), //Substring shows only those characters from string
+        "amount": totalSum,
+      };
+    });
+  }
+
+  double get totalSpending {
+    return groupedTransactionAmounts.fold(0.0, (sum, item) {
+      return sum + (item["amount"] as num);
     });
   }
 
@@ -31,9 +42,25 @@ class Chart extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 6,
-      margin: EdgeInsets.all(20),
-      child: Row(
-        children: <Widget>[],
+      margin: const EdgeInsets.all(20),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: groupedTransactionAmounts.map((entry) {
+            return Flexible(
+              //Flexfit makes sure all children take up the same amount of space
+              fit: FlexFit.tight,
+              child: BarChart(
+                entry["day"] as String,
+                entry["amount"] as double,
+                totalSpending == 0.0
+                    ? 0.0
+                    : (entry["amount"] as double) / totalSpending,
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
